@@ -1,40 +1,40 @@
 <p align="center">
   <img src="https://img.shields.io/badge/OCI-Oracle_Cloud-F80000?style=for-the-badge&logo=oracle&logoColor=white" alt="OCI"/>
   <img src="https://img.shields.io/badge/Terraform-%3E%3D1.5-844FBA?style=for-the-badge&logo=terraform&logoColor=white" alt="Terraform"/>
-  <img src="https://img.shields.io/github/v/tag/andriocampos/terraform-oci-modules?style=for-the-badge&label=latest&color=blue" alt="Latest Tag"/>
-  <img src="https://img.shields.io/github/license/andriocampos/terraform-oci-modules?style=for-the-badge" alt="License"/>
+  <img src="https://img.shields.io/github/v/tag/andriocampos/terraform-oci-modules?style=for-the-badge&label=vers%C3%A3o&color=blue" alt="Versão"/>
+  <img src="https://img.shields.io/github/license/andriocampos/terraform-oci-modules?style=for-the-badge" alt="Licença"/>
 </p>
 
 # Terraform OCI Modules
 
-Reusable, production-grade Terraform modules for Oracle Cloud Infrastructure (OCI). Designed for composability, idempotency, and Free Tier compatibility.
+Módulos Terraform reutilizáveis e prontos para produção para Oracle Cloud Infrastructure (OCI). Projetados para composabilidade, idempotência e compatibilidade com Free Tier.
 
 ---
 
-## Overview
+## Visão Geral
 
-This repository provides a curated set of Terraform modules for provisioning core OCI networking and identity resources. Each module follows the [Terraform Module Standard](https://developer.hashicorp.com/terraform/language/modules/develop/structure) and is independently versioned via Git tags.
+Este repositório fornece um conjunto de módulos Terraform para provisionamento de recursos de rede e identidade na OCI. Cada módulo segue o [padrão de módulos Terraform](https://developer.hashicorp.com/terraform/language/modules/develop/structure) e é versionado independentemente via tags Git.
 
-### Design Principles
+### Princípios de Design
 
-- **Minimal blast radius** — each module manages a single concern
-- **Free Tier first** — default configurations stay within OCI Always Free limits
-- **Pin-and-forget** — consumers reference a `?ref=vX.Y.Z` tag for stability
-- **Zero secrets in code** — all sensitive values are injected via variables
-
----
-
-## Modules
-
-| Module | Description | Resources |
-|--------|-------------|-----------|
-| [`compartment`](./modules/compartment/) | Identity compartment with lifecycle control | `oci_identity_compartment` |
-| [`vcn`](./modules/vcn/) | Full networking stack | VCN, IGW, SGW, Route Tables, Security Lists |
-| [`subnets`](./modules/subnets/) | Public + Private subnets | `oci_core_subnet` × 2 |
+- **Blast radius mínimo** — cada módulo gerencia uma única responsabilidade
+- **Free Tier primeiro** — configurações padrão permanecem dentro dos limites gratuitos da OCI
+- **Pin e esqueça** — consumidores referenciam uma tag `?ref=vX.Y.Z` para estabilidade
+- **Zero secrets no código** — todos os valores sensíveis são injetados via variáveis
 
 ---
 
-## Quick Start
+## Módulos
+
+| Módulo | Descrição | Recursos |
+|--------|-----------|----------|
+| [`compartment`](./modules/compartment/) | Compartment de identidade com controle de ciclo de vida | `oci_identity_compartment` |
+| [`vcn`](./modules/vcn/) | Stack completo de rede | VCN, IGW, SGW, Route Tables, Security Lists |
+| [`subnets`](./modules/subnets/) | Subnets pública + privada | `oci_core_subnet` × 2 |
+
+---
+
+## Início Rápido
 
 ```hcl
 module "compartment" {
@@ -42,7 +42,7 @@ module "compartment" {
 
   parent_compartment_id = var.tenancy_ocid
   name                  = "infraestrutura"
-  description           = "Core infrastructure compartment"
+  description           = "Compartment de infraestrutura core"
   freeform_tags         = { managed_by = "terraform" }
 }
 
@@ -72,68 +72,19 @@ module "subnets" {
 
 ---
 
-## Module Reference
-
-### `modules/compartment`
-
-#### Inputs
-
-| Name | Type | Required | Default | Description |
-|------|------|----------|---------|-------------|
-| `parent_compartment_id` | `string` | ✅ | — | OCID of parent compartment |
-| `name` | `string` | ✅ | — | Compartment name |
-| `description` | `string` | ❌ | `"Managed by Terraform"` | Compartment description |
-| `enable_delete` | `bool` | ❌ | `true` | Allow Terraform to destroy |
-| `freeform_tags` | `map(string)` | ❌ | `{}` | Free-form tags |
-
-#### Outputs
-
-| Name | Description |
-|------|-------------|
-| `id` | Compartment OCID |
-| `name` | Compartment name |
-
----
-
-### `modules/vcn`
-
-#### Inputs
-
-| Name | Type | Required | Default | Description |
-|------|------|----------|---------|-------------|
-| `compartment_id` | `string` | ✅ | — | Compartment OCID |
-| `vcn_name` | `string` | ✅ | — | VCN display name |
-| `vcn_cidr_blocks` | `list(string)` | ✅ | — | VCN CIDR blocks |
-| `vcn_dns_label` | `string` | ✅ | — | VCN DNS label |
-| `igw_display_name` | `string` | ❌ | `"igw-core"` | Internet Gateway name |
-| `sgw_display_name` | `string` | ❌ | `"sgw-core"` | Service Gateway name |
-| `freeform_tags` | `map(string)` | ❌ | `{}` | Free-form tags |
-
-#### Outputs
-
-| Name | Description |
-|------|-------------|
-| `vcn_id` | VCN OCID |
-| `igw_id` | Internet Gateway OCID |
-| `sgw_id` | Service Gateway OCID |
-| `route_table_public_id` | Public route table OCID |
-| `route_table_private_id` | Private route table OCID |
-| `security_list_public_id` | Public security list OCID |
-| `security_list_private_id` | Private security list OCID |
-
-#### Networking Topology
+## Topologia de Rede
 
 ```
 ┌─────────────────────────────────────────────────┐
 │ VCN                                             │
 │                                                 │
 │  ┌─────────────┐         ┌─────────────┐       │
-│  │ RT Public   │         │ RT Private  │       │
+│  │ RT Pública  │         │ RT Privada  │       │
 │  │ 0.0.0.0/0→IGW│        │ OCI Svc→SGW │       │
 │  └──────┬──────┘         └──────┬──────┘       │
 │         │                       │               │
 │  ┌──────▼──────┐         ┌──────▼──────┐       │
-│  │  SL Public  │         │ SL Private  │       │
+│  │ SL Pública  │         │ SL Privada  │       │
 │  │ SSH: any    │         │ SSH: VCN    │       │
 │  └─────────────┘         └─────────────┘       │
 │                                                 │
@@ -142,98 +93,67 @@ module "subnets" {
 │  └────┬────┘  └────┬────┘                      │
 └───────┼─────────────┼──────────────────────────-┘
         │             │
-    Internet      OCI Services
+    Internet      Serviços OCI
 ```
 
 ---
 
-### `modules/subnets`
+## Requisitos
 
-#### Inputs
-
-| Name | Type | Required | Default | Description |
-|------|------|----------|---------|-------------|
-| `compartment_id` | `string` | ✅ | — | Compartment OCID |
-| `vcn_id` | `string` | ✅ | — | VCN OCID |
-| `public_subnet_cidr` | `string` | ✅ | — | Public subnet CIDR |
-| `private_subnet_cidr` | `string` | ✅ | — | Private subnet CIDR |
-| `public_subnet_name` | `string` | ❌ | `"subnet-pub-core"` | Public subnet name |
-| `private_subnet_name` | `string` | ❌ | `"subnet-pvt-core"` | Private subnet name |
-| `public_subnet_dns_label` | `string` | ❌ | `"pubcore"` | Public subnet DNS label |
-| `private_subnet_dns_label` | `string` | ❌ | `"pvtcore"` | Private subnet DNS label |
-| `route_table_public_id` | `string` | ✅ | — | Public route table OCID |
-| `route_table_private_id` | `string` | ✅ | — | Private route table OCID |
-| `security_list_public_id` | `string` | ✅ | — | Public security list OCID |
-| `security_list_private_id` | `string` | ✅ | — | Private security list OCID |
-| `freeform_tags` | `map(string)` | ❌ | `{}` | Free-form tags |
-
-#### Outputs
-
-| Name | Description |
-|------|-------------|
-| `public_subnet_id` | Public subnet OCID |
-| `private_subnet_id` | Private subnet OCID |
-| `public_subnet_cidr` | Public subnet CIDR |
-| `private_subnet_cidr` | Private subnet CIDR |
-
----
-
-## Requirements
-
-| Dependency | Version |
-|------------|---------|
+| Dependência | Versão |
+|-------------|--------|
 | Terraform | `>= 1.5.0` |
 | Provider `oracle/oci` | `~> 8.26` |
-| Git (SSH access) | For module sourcing |
+| Git (acesso SSH) | Para sourcing dos módulos |
 
 ---
 
-## Versioning
+## Versionamento
 
-This project follows [Semantic Versioning 2.0.0](https://semver.org/):
+Este projeto segue o [Versionamento Semântico 2.0.0](https://semver.org/lang/pt-BR/):
 
-| Bump | When |
-|------|------|
-| **MAJOR** | Breaking changes to existing variables or outputs |
-| **MINOR** | New modules or backward-compatible features |
-| **PATCH** | Documentation or bug fixes |
+| Bump | Quando |
+|------|--------|
+| **MAJOR** | Mudanças incompatíveis em variáveis ou outputs existentes |
+| **MINOR** | Novos módulos ou funcionalidades retrocompatíveis |
+| **PATCH** | Correções de bugs ou documentação |
 
-Always pin to a specific tag in your source:
+Sempre fixe uma tag específica no source:
 
 ```hcl
-source = "git::ssh://...?ref=v1.0.0"  # ✅ pinned
-source = "git::ssh://..."              # ❌ unstable (follows HEAD)
+source = "git::ssh://...?ref=v1.0.0"  # ✅ fixado
+source = "git::ssh://..."              # ❌ instável (segue HEAD)
 ```
 
 ---
 
-## Documentation
+## Documentação
 
-| Document | Description |
-|----------|-------------|
-| [Usage Guide](./docs/USAGE_GUIDE.md) | Complete guide: prerequisites, auth setup, step-by-step deploy, versioning, troubleshooting |
-| [Module: compartment](./modules/compartment/README.md) | Inputs, outputs, notes |
-| [Module: vcn](./modules/vcn/README.md) | Inputs, outputs, architecture, security rules |
-| [Module: subnets](./modules/subnets/README.md) | Inputs, outputs, CIDR planning, public vs private behavior |
+| Documento | Descrição |
+|-----------|-----------|
+| [Guia de Uso](./docs/USAGE_GUIDE.md) | Guia completo: pré-requisitos, autenticação, deploy passo-a-passo, versionamento, troubleshooting |
+| [Módulo: compartment](./modules/compartment/README.md) | Entradas, saídas, notas |
+| [Módulo: vcn](./modules/vcn/README.md) | Entradas, saídas, arquitetura, regras de segurança |
+| [Módulo: subnets](./modules/subnets/README.md) | Entradas, saídas, planejamento CIDR, comportamento pub vs pvt |
 
-## Examples
+## Exemplos
 
-| Example | Description |
-|---------|-------------|
-| [infra-core](./examples/infra-core/) | Complete landing zone: compartment + VCN + subnets |
-
----
-
-## Contributing
-
-1. Create a feature branch from `main`
-2. Make changes following existing patterns
-3. Run `terraform fmt -recursive` and `terraform validate`
-4. Update `CHANGELOG.md`
-5. Open a Pull Request
+| Exemplo | Descrição |
+|---------|-----------|
+| [infra-core](./examples/infra-core/) | Landing zone completa: compartment + VCN + subnets |
 
 ---
 
-## License
+## Contribuindo
+
+1. Crie uma branch a partir de `main`
+2. Faça alterações seguindo os padrões existentes
+3. Execute `terraform fmt -recursive` e `terraform validate`
+4. Atualize o `CHANGELOG.md`
+5. Abra um Pull Request
+
+---
+
+## Licença
 
 [MIT](./LICENSE)

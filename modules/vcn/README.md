@@ -1,8 +1,8 @@
-# Module: VCN
+# Módulo: VCN
 
-Creates a complete OCI Virtual Cloud Network stack including gateways, route tables, and security lists. Provides a production-ready networking foundation with public/private separation.
+Cria um stack completo de rede OCI incluindo gateways, route tables e security lists. Fornece uma base de rede pronta para produção com separação pública/privada.
 
-## Usage
+## Uso
 
 ```hcl
 module "vcn" {
@@ -20,43 +20,43 @@ module "vcn" {
 }
 ```
 
-## Inputs
+## Entradas
 
-| Name | Type | Required | Default | Description |
-|------|------|:--------:|---------|-------------|
-| `compartment_id` | `string` | ✅ | — | Compartment OCID where VCN will be created |
-| `vcn_name` | `string` | ✅ | — | VCN display name |
-| `vcn_cidr_blocks` | `list(string)` | ✅ | — | CIDR blocks for the VCN (e.g., `["10.50.0.0/16"]`) |
-| `vcn_dns_label` | `string` | ✅ | — | DNS label for the VCN (max 15 chars, alphanumeric, must start with letter) |
-| `igw_display_name` | `string` | ❌ | `"igw-core"` | Internet Gateway display name |
-| `sgw_display_name` | `string` | ❌ | `"sgw-core"` | Service Gateway display name |
-| `freeform_tags` | `map(string)` | ❌ | `{}` | Free-form tags to apply to all resources |
+| Nome | Tipo | Obrigatório | Padrão | Descrição |
+|------|------|:-----------:|--------|-----------|
+| `compartment_id` | `string` | ✅ | — | OCID do compartment onde a VCN será criada |
+| `vcn_name` | `string` | ✅ | — | Nome de exibição da VCN |
+| `vcn_cidr_blocks` | `list(string)` | ✅ | — | Blocos CIDR da VCN (ex: `["10.50.0.0/16"]`) |
+| `vcn_dns_label` | `string` | ✅ | — | Label DNS da VCN (máx 15 chars, alfanumérico, iniciar com letra) |
+| `igw_display_name` | `string` | ❌ | `"igw-core"` | Nome do Internet Gateway |
+| `sgw_display_name` | `string` | ❌ | `"sgw-core"` | Nome do Service Gateway |
+| `freeform_tags` | `map(string)` | ❌ | `{}` | Tags de formato livre aplicadas a todos os recursos |
 
-## Outputs
+## Saídas
 
-| Name | Type | Description |
-|------|------|-------------|
-| `vcn_id` | `string` | VCN OCID |
-| `igw_id` | `string` | Internet Gateway OCID |
-| `sgw_id` | `string` | Service Gateway OCID |
-| `route_table_public_id` | `string` | Public route table OCID |
-| `route_table_private_id` | `string` | Private route table OCID |
-| `security_list_public_id` | `string` | Public security list OCID |
-| `security_list_private_id` | `string` | Private security list OCID |
+| Nome | Tipo | Descrição |
+|------|------|-----------|
+| `vcn_id` | `string` | OCID da VCN |
+| `igw_id` | `string` | OCID do Internet Gateway |
+| `sgw_id` | `string` | OCID do Service Gateway |
+| `route_table_public_id` | `string` | OCID da Route Table pública |
+| `route_table_private_id` | `string` | OCID da Route Table privada |
+| `security_list_public_id` | `string` | OCID da Security List pública |
+| `security_list_private_id` | `string` | OCID da Security List privada |
 
-## Resources Created
+## Recursos Criados
 
-| Resource | Name | Purpose |
-|----------|------|---------|
-| `oci_core_vcn` | `{vcn_name}` | Virtual Cloud Network |
-| `oci_core_internet_gateway` | `igw-core` | Public internet access (bidirectional) |
-| `oci_core_service_gateway` | `sgw-core` | Access to OCI Services without NAT |
-| `oci_core_route_table` | `rt-pub-core` | Routes for public subnet (0.0.0.0/0 → IGW) |
-| `oci_core_route_table` | `rt-pvt-core` | Routes for private subnet (OCI Services → SGW) |
-| `oci_core_security_list` | `sl-pub-core` | Firewall rules for public subnet |
-| `oci_core_security_list` | `sl-pvt-core` | Firewall rules for private subnet |
+| Recurso | Nome | Propósito |
+|---------|------|-----------|
+| `oci_core_vcn` | `{vcn_name}` | Rede Virtual Cloud |
+| `oci_core_internet_gateway` | `igw-core` | Acesso à internet (bidirecional) |
+| `oci_core_service_gateway` | `sgw-core` | Acesso a serviços OCI sem NAT |
+| `oci_core_route_table` | `rt-pub-core` | Rotas para subnet pública (0.0.0.0/0 → IGW) |
+| `oci_core_route_table` | `rt-pvt-core` | Rotas para subnet privada (Serviços OCI → SGW) |
+| `oci_core_security_list` | `sl-pub-core` | Regras de firewall para subnet pública |
+| `oci_core_security_list` | `sl-pvt-core` | Regras de firewall para subnet privada |
 
-## Architecture
+## Arquitetura
 
 ```
 ┌─────────────────────────────────────────────────────────┐
@@ -75,41 +75,41 @@ module "vcn" {
 │                                                         │
 │  ┌──────────┐  ┌──────────┐                            │
 │  │   IGW    │  │   SGW    │                            │
-│  │(internet)│  │(OCI svc) │                            │
+│  │(internet)│  │(svc OCI) │                            │
 │  └────┬─────┘  └────┬─────┘                            │
 └───────┼──────────────┼─────────────────────────────────-┘
         │              │
-    Internet      OCI Services (repos, storage, registry)
+    Internet      Serviços OCI (repos, storage, registry)
 ```
 
-## Security List Rules
+## Regras das Security Lists
 
-### Public (`sl-pub-core`)
+### Pública (`sl-pub-core`)
 
-| Direction | Protocol | Port/Type | Source/Dest | Description |
-|-----------|----------|-----------|-------------|-------------|
-| Ingress | TCP | 22 | `0.0.0.0/0` | SSH from any |
-| Ingress | ICMP | Type 3, Code 4 | `0.0.0.0/0` | Path MTU Discovery |
-| Ingress | ICMP | Type 3 | VCN CIDR | Destination Unreachable |
-| Egress | ALL | — | `0.0.0.0/0` | Allow all outbound |
+| Direção | Protocolo | Porta/Tipo | Origem/Destino | Descrição |
+|---------|-----------|------------|----------------|-----------|
+| Ingress | TCP | 22 | `0.0.0.0/0` | SSH de qualquer origem |
+| Ingress | ICMP | Tipo 3, Código 4 | `0.0.0.0/0` | Path MTU Discovery |
+| Ingress | ICMP | Tipo 3 | CIDR da VCN | Destination Unreachable |
+| Egress | ALL | — | `0.0.0.0/0` | Permitir toda saída |
 
-### Private (`sl-pvt-core`)
+### Privada (`sl-pvt-core`)
 
-| Direction | Protocol | Port/Type | Source/Dest | Description |
-|-----------|----------|-----------|-------------|-------------|
-| Ingress | TCP | 22 | VCN CIDR | SSH from VCN only |
-| Ingress | ICMP | Type 3, Code 4 | VCN CIDR | Path MTU Discovery |
-| Egress | ALL | — | `0.0.0.0/0` | Allow all outbound |
+| Direção | Protocolo | Porta/Tipo | Origem/Destino | Descrição |
+|---------|-----------|------------|----------------|-----------|
+| Ingress | TCP | 22 | CIDR da VCN | SSH somente da VCN |
+| Ingress | ICMP | Tipo 3, Código 4 | CIDR da VCN | Path MTU Discovery |
+| Egress | ALL | — | `0.0.0.0/0` | Permitir toda saída |
 
-## Design Decisions
+## Decisões de Design
 
-| Decision | Rationale |
-|----------|-----------|
-| Service Gateway instead of NAT Gateway | NAT GW costs ~$16.50/month. SGW is free and provides access to OCI repos, Object Storage, Container Registry |
-| SSH open to 0.0.0.0/0 on public SL | Portfolio/lab environment. For production, restrict to known IPs or use Bastion service |
-| ICMP rules included | Required for Path MTU Discovery — without these, large packets are silently dropped |
-| Stateful rules (default) | Simplifies rule management — response traffic is automatically allowed |
+| Decisão | Justificativa |
+|---------|---------------|
+| Service Gateway em vez de NAT Gateway | NAT GW custa ~R$85/mês. SGW é gratuito e dá acesso a repos OCI, Object Storage, Container Registry |
+| SSH aberto para 0.0.0.0/0 na SL pública | Ambiente de portfólio/lab. Em produção, restringir a IPs conhecidos ou usar Bastion |
+| Regras ICMP incluídas | Necessárias para Path MTU Discovery — sem elas, pacotes grandes são dropados silenciosamente |
+| Regras stateful (padrão) | Simplifica gerenciamento — tráfego de resposta é automaticamente permitido |
 
-## Cost
+## Custo
 
-**Free** — All resources created by this module (VCN, IGW, SGW, Route Tables, Security Lists) are included in OCI Free Tier with no usage limits.
+**Gratuito** — Todos os recursos criados por este módulo (VCN, IGW, SGW, Route Tables, Security Lists) estão incluídos no Free Tier da OCI.

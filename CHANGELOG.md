@@ -8,7 +8,7 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/).
 
 ### Adicionado
 
-- Módulo `compartment` — cria `oci_identity_compartment` com suporte a tags
+- Módulo `compartment` — cria `oci_identity_compartment` com suporte a tags e controle de ciclo de vida
 - Módulo `vcn` — cria VCN completa com:
   - Internet Gateway (IGW)
   - Service Gateway (SGW) para All OCI Services
@@ -18,4 +18,4 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/).
   - Security List privada (SSH 22 VCN-only, ICMP)
 - Módulo `subnets` — cria subnet pública e privada com associação de RT e SL
 - Exemplo completo `infra-core`
-- Documentação com exemplos de uso
+- Documentação completa com guia de uso e troubleshooting

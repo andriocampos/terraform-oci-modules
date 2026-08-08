@@ -1,8 +1,8 @@
-# Module: Subnets
+# Módulo: Subnets
 
-Creates a public and private subnet pair within an existing VCN. Each subnet is associated with its own route table and security list for network isolation.
+Cria um par de subnets (pública e privada) dentro de uma VCN existente. Cada subnet é associada à sua própria route table e security list para isolamento de rede.
 
-## Usage
+## Uso
 
 ```hcl
 module "subnets" {
@@ -25,69 +25,69 @@ module "subnets" {
 }
 ```
 
-## Inputs
+## Entradas
 
-| Name | Type | Required | Default | Description |
-|------|------|:--------:|---------|-------------|
-| `compartment_id` | `string` | ✅ | — | Compartment OCID |
-| `vcn_id` | `string` | ✅ | — | VCN OCID where subnets will be created |
-| `public_subnet_cidr` | `string` | ✅ | — | CIDR for public subnet (e.g., `10.50.1.0/24`) |
-| `private_subnet_cidr` | `string` | ✅ | — | CIDR for private subnet (e.g., `10.50.11.0/24`) |
-| `public_subnet_name` | `string` | ❌ | `"subnet-pub-core"` | Public subnet display name |
-| `private_subnet_name` | `string` | ❌ | `"subnet-pvt-core"` | Private subnet display name |
-| `public_subnet_dns_label` | `string` | ❌ | `"pubcore"` | Public subnet DNS label |
-| `private_subnet_dns_label` | `string` | ❌ | `"pvtcore"` | Private subnet DNS label |
-| `route_table_public_id` | `string` | ✅ | — | Route table OCID for public subnet |
-| `route_table_private_id` | `string` | ✅ | — | Route table OCID for private subnet |
-| `security_list_public_id` | `string` | ✅ | — | Security list OCID for public subnet |
-| `security_list_private_id` | `string` | ✅ | — | Security list OCID for private subnet |
-| `freeform_tags` | `map(string)` | ❌ | `{}` | Free-form tags to apply |
+| Nome | Tipo | Obrigatório | Padrão | Descrição |
+|------|------|:-----------:|--------|-----------|
+| `compartment_id` | `string` | ✅ | — | OCID do compartment |
+| `vcn_id` | `string` | ✅ | — | OCID da VCN onde as subnets serão criadas |
+| `public_subnet_cidr` | `string` | ✅ | — | CIDR da subnet pública (ex: `10.50.1.0/24`) |
+| `private_subnet_cidr` | `string` | ✅ | — | CIDR da subnet privada (ex: `10.50.11.0/24`) |
+| `public_subnet_name` | `string` | ❌ | `"subnet-pub-core"` | Nome da subnet pública |
+| `private_subnet_name` | `string` | ❌ | `"subnet-pvt-core"` | Nome da subnet privada |
+| `public_subnet_dns_label` | `string` | ❌ | `"pubcore"` | Label DNS da subnet pública |
+| `private_subnet_dns_label` | `string` | ❌ | `"pvtcore"` | Label DNS da subnet privada |
+| `route_table_public_id` | `string` | ✅ | — | OCID da Route Table para subnet pública |
+| `route_table_private_id` | `string` | ✅ | — | OCID da Route Table para subnet privada |
+| `security_list_public_id` | `string` | ✅ | — | OCID da Security List para subnet pública |
+| `security_list_private_id` | `string` | ✅ | — | OCID da Security List para subnet privada |
+| `freeform_tags` | `map(string)` | ❌ | `{}` | Tags de formato livre |
 
-## Outputs
+## Saídas
 
-| Name | Type | Description |
-|------|------|-------------|
-| `public_subnet_id` | `string` | Public subnet OCID |
-| `private_subnet_id` | `string` | Private subnet OCID |
-| `public_subnet_cidr` | `string` | Public subnet CIDR block |
-| `private_subnet_cidr` | `string` | Private subnet CIDR block |
+| Nome | Tipo | Descrição |
+|------|------|-----------|
+| `public_subnet_id` | `string` | OCID da subnet pública |
+| `private_subnet_id` | `string` | OCID da subnet privada |
+| `public_subnet_cidr` | `string` | CIDR da subnet pública |
+| `private_subnet_cidr` | `string` | CIDR da subnet privada |
 
-## Resources Created
+## Recursos Criados
 
-| Resource | Name | Public IP | Internet Ingress |
-|----------|------|:---------:|:----------------:|
-| `oci_core_subnet` | `subnet-pub-core` | ✅ Allowed | ✅ Allowed |
-| `oci_core_subnet` | `subnet-pvt-core` | ❌ Blocked | ❌ Blocked |
+| Recurso | Nome | IP Público | Ingress Internet |
+|---------|------|:----------:|:----------------:|
+| `oci_core_subnet` | `subnet-pub-core` | ✅ Permitido | ✅ Permitido |
+| `oci_core_subnet` | `subnet-pvt-core` | ❌ Bloqueado | ❌ Bloqueado |
 
-## Public vs Private Subnet Behavior
+## Comportamento: Subnet Pública vs Privada
 
-| Property | Public Subnet | Private Subnet |
-|----------|:-------------:|:--------------:|
+| Propriedade | Subnet Pública | Subnet Privada |
+|-------------|:--------------:|:--------------:|
 | `prohibit_internet_ingress` | `false` | `true` |
 | `prohibit_public_ip_on_vnic` | `false` | `true` |
-| Instances get public IP | Yes (auto-assigned) | No |
-| Direct internet access | Via IGW (in + out) | No (SGW only for OCI Services) |
-| Typical workloads | Bastion, web server, LB | Database, backend, workers |
+| Instâncias recebem IP público | Sim (auto) | Não |
+| Acesso direto à internet | Via IGW (entrada + saída) | Não (apenas SGW para OCI Services) |
+| Workloads típicos | Bastion, web server, LB | Banco de dados, backend, workers |
 
-## CIDR Planning
+## Planejamento de CIDR
 
-This module expects CIDRs from within the parent VCN block. Example allocation:
+Este módulo espera CIDRs dentro do bloco da VCN pai. Exemplo de alocação:
 
 ```
-VCN: 10.50.0.0/16 (65,536 IPs total)
+VCN: 10.50.0.0/16 (65.536 IPs total)
 │
-├── 10.50.1.0/24   → subnet-pub-core  (251 usable IPs)
-├── 10.50.11.0/24  → subnet-pvt-core  (251 usable IPs)
-├── 10.50.2.0/24   → (available for future projects)
-├── 10.50.3.0/24   → (available for future projects)
+├── 10.50.1.0/24   → subnet-pub-core  (251 IPs utilizáveis)
+├── 10.50.11.0/24  → subnet-pvt-core  (251 IPs utilizáveis)
+├── 10.50.2.0/24   → (disponível para projetos futuros)
+├── 10.50.3.0/24   → (disponível para projetos futuros)
 └── ...
 ```
 
-> **Note:** OCI reserves 3 IPs per subnet (network, broadcast, DNS). A /24 provides 251 usable host addresses.
+> **Nota:** A OCI reserva 3 IPs por subnet (rede, broadcast, DNS). Um /24 fornece 251 endereços utilizáveis.
 
-## Dependencies
+## Dependências
 
-This module requires outputs from the `vcn` module:
+Este módulo requer outputs do módulo `vcn`:
 
 ```mermaid
 graph LR
@@ -98,6 +98,6 @@ graph LR
     B -->|security_list_*_id| C
 ```
 
-## Cost
+## Custo
 
-**Free** — Subnets are free in OCI. No per-subnet charges or bandwidth fees within the same VCN.
+**Gratuito** — Subnets são gratuitas na OCI. Sem cobrança por subnet ou tráfego dentro da mesma VCN.
