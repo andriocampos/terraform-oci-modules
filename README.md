@@ -207,6 +207,15 @@ source = "git::ssh://..."              # ❌ unstable (follows HEAD)
 
 ---
 
+## Documentation
+
+| Document | Description |
+|----------|-------------|
+| [Usage Guide](./docs/USAGE_GUIDE.md) | Complete guide: prerequisites, auth setup, step-by-step deploy, versioning, troubleshooting |
+| [Module: compartment](./modules/compartment/README.md) | Inputs, outputs, notes |
+| [Module: vcn](./modules/vcn/README.md) | Inputs, outputs, architecture, security rules |
+| [Module: subnets](./modules/subnets/README.md) | Inputs, outputs, CIDR planning, public vs private behavior |
+
 ## Examples
 
 | Example | Description |
